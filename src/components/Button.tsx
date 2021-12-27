@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
+  Easing,
   Pressable,
   PressableProps,
   StyleProp,
   StyleSheet,
   Text,
+  View,
   ViewStyle,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors } from '../styles/colors';
 
@@ -21,11 +25,49 @@ type ButtonProps = {
 export const Button: React.FC<ButtonProps> = ({
   kind = 'primary',
   title,
+  loading,
   onPress,
   customStyles,
   ...rest
 }) => {
   const [currentlyPressed, setCurrentlyPressed] = useState(false);
+  const rotate = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  const rotateAnimation = useRef(
+    Animated.loop(
+      Animated.timing(rotate, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+        isInteraction: false,
+      }),
+    ),
+  ).current;
+
+  useEffect(() => {
+    if (loading) {
+      rotateAnimation.start();
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }).reset();
+      rotateAnimation.reset();
+    }
+
+    return () => {
+      rotateAnimation.reset();
+    };
+  }, [loading, opacity, rotateAnimation]);
+
   return (
     <Pressable
       style={[
@@ -40,33 +82,61 @@ export const Button: React.FC<ButtonProps> = ({
         setCurrentlyPressed(false);
       }}
       {...rest}>
-      <Text
-        style={[
-          styles.baseText,
-          kind === 'primary'
-            ? styles.primaryButtonText
-            : styles.secondaryButtonText,
-        ]}>
-        {title}
-      </Text>
+      <View style={styles.baseTextContainer}>
+        {loading && (
+          <Animated.View
+            style={[
+              styles.loaderContainer,
+              {
+                transform: [
+                  {
+                    rotate: rotate.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '365deg'],
+                    }),
+                  },
+                ],
+                opacity: opacity,
+              },
+            ]}>
+            <Icon
+              name="loading"
+              size={20}
+              color={kind === 'primary' ? colors.background : colors.primary}
+            />
+          </Animated.View>
+        )}
+        <Text
+          style={[
+            styles.baseText,
+            kind === 'primary'
+              ? styles.primaryButtonText
+              : styles.secondaryButtonText,
+          ]}>
+          {title}
+        </Text>
+      </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   baseButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 22,
     borderWidth: 2,
-    flexShrink: 3,
     alignSelf: 'flex-start',
     minWidth: 100,
   },
+  baseTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   baseText: {
-    fontWeight: 'bold',
+    fontWeight: '500',
     fontSize: 15,
-    textAlign: 'center',
   },
   primaryButtonText: {
     color: colors.secondaryText,
@@ -84,5 +154,8 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.8,
+  },
+  loaderContainer: {
+    marginRight: 6,
   },
 });
