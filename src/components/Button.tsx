@@ -27,6 +27,7 @@ export const Button: React.FC<ButtonProps> = ({
   title,
   loading,
   onPress,
+  disabled,
   customStyles,
   ...rest
 }) => {
@@ -72,7 +73,13 @@ export const Button: React.FC<ButtonProps> = ({
     <Pressable
       style={[
         styles.baseButton,
-        kind === 'primary' ? styles.primaryButton : styles.secondaryButton,
+        kind === 'primary'
+          ? disabled
+            ? styles.primaryButtonContainerDisabled
+            : styles.primaryButtonContainer
+          : disabled
+          ? styles.secondaryButtonContainerDisabled
+          : styles.secondaryButtonContainer,
         currentlyPressed ? styles.pressed : null,
         customStyles,
       ]}
@@ -81,6 +88,7 @@ export const Button: React.FC<ButtonProps> = ({
         onPress();
         setCurrentlyPressed(false);
       }}
+      disabled={disabled}
       {...rest}>
       <View style={styles.baseTextContainer}>
         {loading && (
@@ -101,7 +109,7 @@ export const Button: React.FC<ButtonProps> = ({
             ]}>
             <Icon
               name="loading"
-              size={20}
+              size={17}
               color={kind === 'primary' ? colors.background : colors.primary}
             />
           </Animated.View>
@@ -111,6 +119,8 @@ export const Button: React.FC<ButtonProps> = ({
             styles.baseText,
             kind === 'primary'
               ? styles.primaryButtonText
+              : disabled
+              ? styles.secondaryButtonDisabledText
               : styles.secondaryButtonText,
           ]}>
           {title}
@@ -144,11 +154,14 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: colors.primary,
   },
-  primaryButton: {
+  secondaryButtonDisabledText: {
+    color: 'gray',
+  },
+  primaryButtonContainer: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
-  secondaryButton: {
+  secondaryButtonContainer: {
     backgroundColor: colors.background,
     borderColor: colors.border,
   },
@@ -157,5 +170,13 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     marginRight: 6,
+  },
+  primaryButtonContainerDisabled: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primaryLight,
+  },
+  secondaryButtonContainerDisabled: {
+    backgroundColor: colors.border,
+    borderColor: colors.border,
   },
 });
