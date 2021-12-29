@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Animated,
-  Easing,
   Pressable,
   PressableProps,
   StyleProp,
@@ -10,9 +8,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors } from '../styles/colors';
+import { Loader } from './Loader';
 
 type ButtonProps = {
   kind?: 'primary' | 'secondary';
@@ -32,42 +30,6 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => {
   const [currentlyPressed, setCurrentlyPressed] = useState(false);
-  const rotate = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-
-  const rotateAnimation = useRef(
-    Animated.loop(
-      Animated.timing(rotate, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-        isInteraction: false,
-      }),
-    ),
-  ).current;
-
-  useEffect(() => {
-    if (loading) {
-      rotateAnimation.start();
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 100,
-        useNativeDriver: true,
-      }).reset();
-      rotateAnimation.reset();
-    }
-
-    return () => {
-      rotateAnimation.reset();
-    };
-  }, [loading, opacity, rotateAnimation]);
 
   return (
     <Pressable
@@ -92,27 +54,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...rest}>
       <View style={styles.baseTextContainer}>
         {loading && (
-          <Animated.View
-            style={[
-              styles.loaderContainer,
-              {
-                transform: [
-                  {
-                    rotate: rotate.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['0deg', '365deg'],
-                    }),
-                  },
-                ],
-                opacity: opacity,
-              },
-            ]}>
-            <Icon
-              name="loading"
-              size={17}
-              color={kind === 'primary' ? colors.background : colors.primary}
-            />
-          </Animated.View>
+          <Loader color={kind === 'primary' ? colors.white : colors.primary} />
         )}
         <Text
           style={[
@@ -167,9 +109,6 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.8,
-  },
-  loaderContainer: {
-    marginRight: 6,
   },
   primaryButtonContainerDisabled: {
     backgroundColor: colors.primaryLight,
