@@ -1,7 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { Home } from '../screens/Home';
+import { Home } from '../screens/HomeScreen';
+import { WebViewScreen } from '../screens/WebViewScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,13 @@ export const StackNavigator: React.FC = () => {
           headerShown: false,
         }}
         component={Home}
+      />
+      <Stack.Screen
+        name="webview"
+        options={{
+          headerShown: true,
+        }}
+        component={WebViewScreen}
       />
     </Stack.Navigator>
   );

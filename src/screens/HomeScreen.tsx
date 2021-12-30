@@ -22,7 +22,7 @@ export const Home: FC = () => {
   }, [newStoriesData, newStoriesError, newStoriesLoading]);
 
   return (
-    <SafeAreaView style={ScreenStyles}>
+    <SafeAreaView style={[ScreenStyles]}>
       <Pagination
         totalRecords={newStoriesIds.length}
         currentPage={1}
