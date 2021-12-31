@@ -17,7 +17,7 @@ type ButtonProps = {
   title: string;
   loading?: boolean;
   onPress: () => void;
-  customStyles?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 } & Omit<PressableProps, 'onPress' | 'onPressIn' | 'onPressOut'>;
 
 export const Button: React.FC<ButtonProps> = ({
@@ -26,7 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading,
   onPress,
   disabled,
-  customStyles,
+  style,
   ...rest
 }) => {
   const [currentlyPressed, setCurrentlyPressed] = useState(false);
@@ -43,13 +43,11 @@ export const Button: React.FC<ButtonProps> = ({
           ? styles.secondaryButtonContainerDisabled
           : styles.secondaryButtonContainer,
         currentlyPressed ? styles.pressed : null,
-        customStyles,
+        style,
       ]}
       onPressIn={() => setCurrentlyPressed(true)}
-      onPressOut={() => {
-        onPress();
-        setCurrentlyPressed(false);
-      }}
+      onPressOut={() => setCurrentlyPressed(false)}
+      onPress={onPress}
       disabled={disabled}
       {...rest}>
       <View style={styles.baseTextContainer}>
@@ -77,9 +75,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 22,
-    borderWidth: 2,
+    borderWidth: 1,
     alignSelf: 'flex-start',
+    minHeight: 40,
     minWidth: 100,
+    /**
+     * for android
+     */
+    elevation: 3,
+    shadowColor: colors.primary,
   },
   baseTextContainer: {
     flexDirection: 'row',

@@ -19,6 +19,7 @@ export const StackNavigator: React.FC = () => {
       <Stack.Screen
         name="webview"
         options={{
+          title: 'Web View',
           headerShown: true,
         }}
         component={WebViewScreen}

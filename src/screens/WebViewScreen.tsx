@@ -7,16 +7,17 @@ import { Progress } from '../components/Progress';
 import { ScreenStyles } from '../styles/common';
 
 type WebViewScreenProps = {
-  uri: string;
+  route: { params: Record<string, any> };
 };
 
-export const WebViewScreen: React.FC<WebViewScreenProps> = ({ uri }) => {
+export const WebViewScreen: React.FC<WebViewScreenProps> = ({ route }) => {
+  const { params } = route;
   const [progress, setProgress] = useState(0);
   return (
     <SafeAreaView style={[ScreenStyles, styles.webViewContainer]}>
       <Progress progress={progress} />
       <WebView
-        source={{ uri }}
+        source={{ uri: params.url }}
         onLoadProgress={({ nativeEvent }) => setProgress(nativeEvent.progress)}
       />
     </SafeAreaView>
