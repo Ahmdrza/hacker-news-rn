@@ -5,19 +5,19 @@ import { colors } from '../styles/colors';
 import { Button } from './Button';
 
 type PaginationProps = {
-  currentPage: number;
+  initialPage: number;
   totalRecords: number;
   perPage: number;
   onChange: (page: number) => void;
 };
 
 export const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
+  initialPage,
   totalRecords,
   perPage,
   onChange,
 }) => {
-  const [currentPage_, setCurrentPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
   const _handlePageChange = useCallback(
     (page: number) => {
@@ -38,10 +38,10 @@ export const Pagination: React.FC<PaginationProps> = ({
      * on page change so it should trigger first time as well.
      * P.S maybe there's a better logic, will rethink
      */
-    if (currentPage < 2) {
+    if (initialPage < 2) {
       _handlePageChange(1);
     }
-  }, [currentPage, totalRecords, _handlePageChange]);
+  }, [initialPage, totalRecords, _handlePageChange]);
 
   return (
     <>
@@ -51,22 +51,22 @@ export const Pagination: React.FC<PaginationProps> = ({
             title="Prev"
             kind="secondary"
             onPress={() => {
-              const newPage = currentPage_ - 1;
+              const newPage = currentPage - 1;
               _handlePageChange(newPage);
             }}
-            disabled={currentPage_ === 1}
+            disabled={currentPage === 1}
           />
           <Text style={{ color: colors.primary }}>
-            Page: {currentPage_} of {Math.ceil(totalRecords / perPage)}
+            Page: {currentPage} of {Math.ceil(totalRecords / perPage)}
           </Text>
           <Button
             title="Next"
             kind="secondary"
             onPress={() => {
-              const newPage = currentPage_ + 1;
+              const newPage = currentPage + 1;
               _handlePageChange(newPage);
             }}
-            disabled={currentPage_ === Math.ceil(totalRecords / perPage)}
+            disabled={currentPage === Math.ceil(totalRecords / perPage)}
           />
         </View>
       ) : null}

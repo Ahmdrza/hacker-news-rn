@@ -1,20 +1,28 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { Home } from '../screens/HomeScreen';
+import { TopStoriesScreen } from '../screens/TopStoriesScreen';
+import { NewStoriesScreen } from '../screens/NewStoriesScreen';
 import { WebViewScreen } from '../screens/WebViewScreen';
 
 const Stack = createNativeStackNavigator();
 
 export const StackNavigator: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="home">
+    <Stack.Navigator initialRouteName="topStories">
       <Stack.Screen
-        name="home"
+        name="topStories"
         options={{
           headerShown: false,
         }}
-        component={Home}
+        component={TopStoriesScreen}
+      />
+      <Stack.Screen
+        name="newStories"
+        options={{
+          headerShown: false,
+        }}
+        component={NewStoriesScreen}
       />
       <Stack.Screen
         name="webview"
