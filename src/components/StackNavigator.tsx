@@ -10,7 +10,9 @@ const Stack = createNativeStackNavigator();
 
 export const StackNavigator: React.FC = () => {
   return (
-    <Stack.Navigator initialRouteName="topStories">
+    <Stack.Navigator
+      initialRouteName="topStories"
+      screenOptions={{ animation: 'fade_from_bottom' }}>
       <Stack.Screen
         name="topStories"
         options={{
