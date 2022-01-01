@@ -19,7 +19,7 @@ export const StoriesTypesList: React.FC<StoriesTypesListProps> = ({
       contentContainerStyle={{ padding: 3 }}
       horizontal
       showsHorizontalScrollIndicator
-      data={['new', 'top', 'best']}
+      data={['top', 'new', 'best']}
       keyExtractor={item => item}
       renderItem={({ item }) => (
         <Button

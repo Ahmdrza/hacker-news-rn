@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TopStoriesScreen } from '../screens/TopStoriesScreen';
 import { NewStoriesScreen } from '../screens/NewStoriesScreen';
 import { WebViewScreen } from '../screens/WebViewScreen';
+import { BestStoriesScreen } from '../screens/BestStoriesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,13 @@ export const StackNavigator: React.FC = () => {
           headerShown: false,
         }}
         component={NewStoriesScreen}
+      />
+      <Stack.Screen
+        name="bestStories"
+        options={{
+          headerShown: false,
+        }}
+        component={BestStoriesScreen}
       />
       <Stack.Screen
         name="webview"
