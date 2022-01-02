@@ -13,6 +13,10 @@ export const getBestStories = async () => {
   return await axios.get<number[]>('beststories.json');
 };
 
+export const getJobStories = async () => {
+  return await axios.get<number[]>('jobstories.json');
+};
+
 export const getStoryDetails = async ({ id }: { id: number }) => {
   return await axios.get<Story>(`item/${id}.json`);
 };

@@ -1,9 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQuery } from 'react-query';
-import { Animated, Easing, StyleSheet, Text } from 'react-native';
+import { Animated, Easing, StyleSheet } from 'react-native';
 
-import { getTopStories } from '../apis/story';
 import { Pagination } from '../components/Pagination';
 import { LoadItem } from '../components/LoadItem';
 import { colors } from '../styles/colors';
@@ -14,28 +12,23 @@ const HEADER_MAX_HEIGHT = 150;
 const HEADER_MIN_HEIGHT = 65;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-export const TopStoriesScreen: FC = () => {
-  const [storiesIds, setStoriesIds] = useState<number[]>([]);
+type StoriesProps = {
+  storyIds: number[];
+};
+
+export const Stories: FC<StoriesProps> = ({ storyIds }) => {
   const [activeIds, setActiveIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, isError } = useQuery('topStories', getTopStories);
-
   useEffect(() => {
-    if (currentPage > 0 && storiesIds.length) {
-      const newActiveIds = storiesIds.slice(
+    if (currentPage > 0 && storyIds.length) {
+      const newActiveIds = storyIds.slice(
         PER_PAGE * (currentPage - 1),
         PER_PAGE * currentPage,
       );
       setActiveIds([...newActiveIds]);
     }
-  }, [currentPage, storiesIds]);
-
-  useEffect(() => {
-    if (!isLoading && !isError && data) {
-      setStoriesIds(data.data);
-    }
-  }, [data, isLoading, isError]);
+  }, [currentPage, storyIds]);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -99,13 +92,11 @@ export const TopStoriesScreen: FC = () => {
             useNativeDriver: false,
           },
         )}>
-        {isLoading ? (
-          <Text style={{ color: colors.primary }}>Fetching Data</Text>
-        ) : (
-          activeIds.map(id => <LoadItem key={id} id={id} />)
-        )}
+        {activeIds.map(id => (
+          <LoadItem key={id} id={id} />
+        ))}
         <Pagination
-          totalRecords={storiesIds.length}
+          totalRecords={storyIds.length}
           initialPage={1}
           perPage={PER_PAGE}
           onChange={setCurrentPage}

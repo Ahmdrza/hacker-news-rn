@@ -1,13 +1,15 @@
 import React, { FC, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from 'react-query';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 import { getBestStories } from '../apis/story';
 import { Pagination } from '../components/Pagination';
 import { LoadItem } from '../components/LoadItem';
 import { colors } from '../styles/colors';
 import { Header } from '../components/Header';
+
+const PER_PAGE = 15;
 
 export const BestStoriesScreen: FC = () => {
   const [storiesIds, setStoriesIds] = useState<number[]>([]);
@@ -19,8 +21,8 @@ export const BestStoriesScreen: FC = () => {
   useEffect(() => {
     if (currentPage > 0 && storiesIds.length) {
       const newActiveIds = storiesIds.slice(
-        10 * (currentPage - 1),
-        10 * currentPage,
+        PER_PAGE * (currentPage - 1),
+        PER_PAGE * currentPage,
       );
       setActiveIds([...newActiveIds]);
     }
@@ -34,15 +36,17 @@ export const BestStoriesScreen: FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header activeType="best" />
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Header activeType="best" />
-        {activeIds.map(id => (
-          <LoadItem key={id} id={id} />
-        ))}
+        {isLoading ? (
+          <Text style={{ color: colors.primary }}>Fetching Data</Text>
+        ) : (
+          activeIds.map(id => <LoadItem key={id} id={id} />)
+        )}
         <Pagination
           totalRecords={storiesIds.length}
           initialPage={1}
-          perPage={10}
+          perPage={PER_PAGE}
           onChange={setCurrentPage}
         />
       </ScrollView>

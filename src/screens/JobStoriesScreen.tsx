@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from 'react-query';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 
-import { getNewStories } from '../apis/story';
+import { getJobStories } from '../apis/story';
 import { Pagination } from '../components/Pagination';
 import { LoadItem } from '../components/LoadItem';
 import { colors } from '../styles/colors';
@@ -11,12 +11,12 @@ import { Header } from '../components/Header';
 
 const PER_PAGE = 15;
 
-export const NewStoriesScreen: FC = () => {
+export const JobStoriesScreen: FC = () => {
   const [storiesIds, setStoriesIds] = useState<number[]>([]);
   const [activeIds, setActiveIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data, isLoading, isError } = useQuery('newstories', getNewStories);
+  const { data, isLoading, isError } = useQuery('jobStories', getJobStories);
 
   useEffect(() => {
     if (currentPage > 0 && storiesIds.length) {
@@ -36,7 +36,7 @@ export const NewStoriesScreen: FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header activeType="new" />
+      <Header activeType="job" />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
           <Text style={{ color: colors.primary }}>Fetching Data</Text>

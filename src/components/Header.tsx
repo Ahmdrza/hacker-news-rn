@@ -1,17 +1,49 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { FlatList, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, FlatList, StyleSheet, Text } from 'react-native';
 import { colors } from '../styles/colors';
 
 import { StoryType } from '../types/item';
 import { Button } from './Button';
 
+const types = ['top', 'new', 'best', 'job'];
+
 type HeaderProps = {
   activeType: StoryType;
+  height: Animated.AnimatedInterpolation;
+  opacity: Animated.AnimatedInterpolation;
+  translateY: Animated.AnimatedInterpolation;
+  backgroundColor: Animated.AnimatedInterpolation;
+  textColor: Animated.AnimatedInterpolation;
+  textScale: Animated.AnimatedInterpolation;
+  translateX: Animated.AnimatedInterpolation;
 };
 
-export const Header: React.FC<HeaderProps> = ({ activeType }) => {
+export const Header: React.FC<HeaderProps> = ({
+  activeType,
+  height,
+  opacity,
+  translateY,
+  backgroundColor,
+  textColor,
+  textScale,
+  translateX,
+}) => {
   const { navigate } = useNavigation();
+
+  const scrollRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (scrollRef && scrollRef.current) {
+        const activeTypeIndex = types.indexOf(activeType);
+        scrollRef.current.scrollToIndex({
+          index: activeTypeIndex,
+          animated: true,
+        });
+      }
+    }, 500);
+  }, [activeType]);
 
   const _handleStoryTypeChange = (type: StoryType) => {
     switch (type) {
@@ -21,39 +53,65 @@ export const Header: React.FC<HeaderProps> = ({ activeType }) => {
         return navigate('newStories');
       case 'best':
         return navigate('bestStories');
+      case 'job':
+        return navigate('jobStories');
       default:
         break;
     }
   };
 
   return (
-    <>
-      <Text style={styles.header}>Hacker News</Text>
-      <FlatList
-        style={styles.storiesList}
-        contentContainerStyle={styles.storiesListContentContainer}
-        horizontal
-        showsHorizontalScrollIndicator
-        data={['top', 'new', 'best']}
-        keyExtractor={item => item}
-        renderItem={({ item }) => (
-          <Button
-            style={styles.storyButton}
-            kind={activeType === item ? 'primary' : 'secondary'}
-            title={`${item[0].toUpperCase()}${item
-              .split('')
-              .splice(1)
-              .join('')}`}
-            onPress={() => _handleStoryTypeChange(item as StoryType)}
-          />
-        )}
-      />
-      <Text style={styles.activeType}>{activeType} Stories</Text>
-    </>
+    <Animated.View style={[styles.container, { height, backgroundColor }]}>
+      <Animated.View style={[{ opacity }]}>
+        <Text style={[styles.header]}>Hacker News</Text>
+      </Animated.View>
+      <Animated.View style={[{ opacity }]}>
+        <FlatList
+          ref={scrollRef}
+          contentContainerStyle={styles.storiesListContentContainer}
+          horizontal
+          showsHorizontalScrollIndicator
+          alwaysBounceHorizontal={false}
+          onScrollToIndexFailed={() => {}}
+          data={types}
+          keyExtractor={item => item}
+          renderItem={({ item }) => (
+            <Button
+              style={styles.storyButton}
+              kind={activeType === item ? 'primary' : 'secondary'}
+              title={`${item[0].toUpperCase()}${item
+                .split('')
+                .splice(1)
+                .join('')}`}
+              onPress={() => _handleStoryTypeChange(item as StoryType)}
+            />
+          )}
+        />
+      </Animated.View>
+      <Animated.Text
+        style={[
+          styles.activeType,
+          {
+            transform: [{ translateY }, { scale: textScale }, { translateX }],
+            color: textColor,
+          },
+        ]}>
+        {activeType} Stories
+      </Animated.Text>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 8,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.background,
+    overflow: 'hidden',
+  },
   header: {
     color: colors.primary,
     fontSize: 32,
@@ -62,10 +120,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   storiesListContentContainer: {
-    padding: 3,
-  },
-  storiesList: {
-    marginBottom: 12,
+    paddingHorizontal: 5,
+    paddingTop: 3,
+    paddingBottom: 15,
   },
   storyButton: {
     marginRight: 12,
@@ -74,7 +131,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 20,
     fontWeight: '700',
-    marginBottom: 10,
     textTransform: 'capitalize',
   },
 });

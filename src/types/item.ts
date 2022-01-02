@@ -13,4 +13,4 @@ export type Story = {
   type: 'story';
 } & Item;
 
-export type StoryType = 'top' | 'new' | 'best';
+export type StoryType = 'top' | 'new' | 'best' | 'job';

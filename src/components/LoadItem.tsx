@@ -34,7 +34,7 @@ export const LoadItem: React.FC<LoadItemProps> = ({ id }) => {
             <Rect x="110" y="22" rx="5" ry="5" width="75" height="9" />
           </ContentLoader>
         </Card>
-      ) : !isError && data ? (
+      ) : !isError && data && data.data ? (
         <Item
           id={data.data.id}
           upvotes={data.data.score}

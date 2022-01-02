@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 22,
-    borderWidth: 1,
     alignSelf: 'flex-start',
     minHeight: 40,
     minWidth: 100,
@@ -105,21 +104,17 @@ const styles = StyleSheet.create({
   },
   primaryButtonContainer: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   secondaryButtonContainer: {
     backgroundColor: colors.background,
-    borderColor: colors.border,
   },
   pressed: {
     opacity: 0.8,
   },
   primaryButtonContainerDisabled: {
     backgroundColor: colors.primaryLight,
-    borderColor: colors.primaryLight,
   },
   secondaryButtonContainerDisabled: {
     backgroundColor: colors.border,
-    borderColor: colors.border,
   },
 });
