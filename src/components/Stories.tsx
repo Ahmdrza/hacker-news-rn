@@ -1,11 +1,10 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Animated, Easing, StyleSheet } from 'react-native';
+import { Animated, Easing, StyleSheet, Text } from 'react-native';
 
 import { Pagination } from '../components/Pagination';
 import { LoadItem } from '../components/LoadItem';
-import { colors } from '../styles/colors';
 import { Header } from '../components/Header';
+import { colors } from '../styles/colors';
 
 const PER_PAGE = 15;
 const HEADER_MAX_HEIGHT = 150;
@@ -14,9 +13,10 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 type StoriesProps = {
   storyIds: number[];
+  loading: boolean;
 };
 
-export const Stories: FC<StoriesProps> = ({ storyIds }) => {
+export const Stories: FC<StoriesProps> = ({ storyIds, loading }) => {
   const [activeIds, setActiveIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -82,7 +82,7 @@ export const Stories: FC<StoriesProps> = ({ storyIds }) => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <Animated.ScrollView
         scrollEventThrottle={1}
         contentContainerStyle={styles.contentContainer}
@@ -92,9 +92,11 @@ export const Stories: FC<StoriesProps> = ({ storyIds }) => {
             useNativeDriver: false,
           },
         )}>
-        {activeIds.map(id => (
-          <LoadItem key={id} id={id} />
-        ))}
+        {loading ? (
+          <Text style={{ color: colors.primary }}>Fetching Data</Text>
+        ) : (
+          activeIds.map(id => <LoadItem key={id} id={id} />)
+        )}
         <Pagination
           totalRecords={storyIds.length}
           initialPage={1}
@@ -103,7 +105,6 @@ export const Stories: FC<StoriesProps> = ({ storyIds }) => {
         />
       </Animated.ScrollView>
       <Header
-        activeType="top"
         height={headerHeight}
         opacity={headerOpacity}
         translateY={activeTypeTranslateY}
@@ -112,15 +113,11 @@ export const Stories: FC<StoriesProps> = ({ storyIds }) => {
         textScale={textScale}
         translateX={translateX}
       />
-    </SafeAreaView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   contentContainer: {
     paddingVertical: 10,
     paddingHorizontal: 12,

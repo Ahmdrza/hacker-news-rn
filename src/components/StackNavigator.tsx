@@ -6,8 +6,9 @@ import { NewStoriesScreen } from '../screens/NewStoriesScreen';
 import { BestStoriesScreen } from '../screens/BestStoriesScreen';
 import { JobStoriesScreen } from '../screens/JobStoriesScreen';
 import { WebViewScreen } from '../screens/WebViewScreen';
+import { RootStackParamList } from '../types/stack';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const StackNavigator: React.FC = () => {
   return (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Animated, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+
 import { colors } from '../styles/colors';
 
 type ProgessProps = {
@@ -7,22 +8,37 @@ type ProgessProps = {
    * number between 0-1
    */
   progress: number;
+  // progressRef: Animated.AnimatedInterpolation;
+  style?: StyleProp<ViewStyle>;
 };
 
-export const Progress: React.FC<ProgessProps> = ({ progress }) => {
+export const Progress: React.FC<ProgessProps> = ({
+  progress,
+  // progressRef,
+  style,
+}) => {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (progress === 1) {
-      setDone(true);
+      setTimeout(() => {
+        setDone(true);
+      }, 300);
     }
   }, [progress]);
 
   return (
     <>
       {!done ? (
-        <View style={styles.container}>
-          <View style={[styles.progress, { width: `${progress * 100}%` }]} />
+        <View style={[styles.container, style]}>
+          <Animated.View
+            style={[
+              styles.progress,
+              {
+                width: `${progress * 100}%`,
+              },
+            ]}
+          />
         </View>
       ) : null}
     </>

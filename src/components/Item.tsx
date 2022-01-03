@@ -1,8 +1,11 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { colors } from '../styles/colors';
+import { RootStackParamList } from '../types/stack';
 
 import { Card } from './Card';
 
@@ -23,13 +26,14 @@ export const Item: React.FC<ItemProps> = ({
   time,
   url,
 }) => {
-  const { navigate } = useNavigation();
+  const { navigate } =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <Card>
       <Pressable
         style={styles.container}
         onPress={() => {
-          url && navigate('webview', { url });
+          url && navigate('webview', { title, url });
         }}>
         <View style={styles.upvotesContainer}>
           <Icon name="heart" size={18} color={colors.primary} />

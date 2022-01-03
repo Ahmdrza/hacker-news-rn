@@ -1,15 +1,26 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, FlatList, StyleSheet, Text } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
 import { colors } from '../styles/colors';
-
-import { StoryType } from '../types/item';
 import { Button } from './Button';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/stack';
 
-const types = ['top', 'new', 'best', 'job'];
+type StoryTypes = {
+  key: string;
+  label: string;
+  routeName: string;
+};
+
+const storyTypes: StoryTypes[] = [
+  { key: 'top', label: 'Top', routeName: 'topStories' },
+  { key: 'new', label: 'New', routeName: 'newStories' },
+  { key: 'best', label: 'Best', routeName: 'bestStories' },
+  { key: 'job', label: 'Job', routeName: 'jobStories' },
+];
 
 type HeaderProps = {
-  activeType: StoryType;
   height: Animated.AnimatedInterpolation;
   opacity: Animated.AnimatedInterpolation;
   translateY: Animated.AnimatedInterpolation;
@@ -20,7 +31,6 @@ type HeaderProps = {
 };
 
 export const Header: React.FC<HeaderProps> = ({
-  activeType,
   height,
   opacity,
   translateY,
@@ -29,36 +39,32 @@ export const Header: React.FC<HeaderProps> = ({
   textScale,
   translateX,
 }) => {
-  const { navigate } = useNavigation();
+  const { navigate } =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { name: activeRouteName } = useRoute();
 
   const scrollRef = useRef<FlatList>(null);
 
   useEffect(() => {
     setTimeout(() => {
       if (scrollRef && scrollRef.current) {
-        const activeTypeIndex = types.indexOf(activeType);
+        const activeTypeIndex = storyTypes.findIndex(
+          type => type.routeName === activeRouteName,
+        );
         scrollRef.current.scrollToIndex({
           index: activeTypeIndex,
           animated: true,
         });
       }
     }, 500);
-  }, [activeType]);
+  }, [activeRouteName]);
 
-  const _handleStoryTypeChange = (type: StoryType) => {
-    switch (type) {
-      case 'top':
-        return navigate('topStories');
-      case 'new':
-        return navigate('newStories');
-      case 'best':
-        return navigate('bestStories');
-      case 'job':
-        return navigate('jobStories');
-      default:
-        break;
-    }
-  };
+  const _getActiveStoryType = useCallback(() => {
+    return (
+      storyTypes.find(type => type.routeName === activeRouteName)?.label ??
+      'Stories'
+    );
+  }, [activeRouteName]);
 
   return (
     <Animated.View style={[styles.container, { height, backgroundColor }]}>
@@ -73,30 +79,29 @@ export const Header: React.FC<HeaderProps> = ({
           showsHorizontalScrollIndicator
           alwaysBounceHorizontal={false}
           onScrollToIndexFailed={() => {}}
-          data={types}
-          keyExtractor={item => item}
+          data={storyTypes}
+          keyExtractor={item => item.key}
           renderItem={({ item }) => (
             <Button
               style={styles.storyButton}
-              kind={activeType === item ? 'primary' : 'secondary'}
-              title={`${item[0].toUpperCase()}${item
-                .split('')
-                .splice(1)
-                .join('')}`}
-              onPress={() => _handleStoryTypeChange(item as StoryType)}
+              kind={
+                activeRouteName === item.routeName ? 'primary' : 'secondary'
+              }
+              title={item.label}
+              onPress={() => navigate(item.routeName)}
             />
           )}
         />
       </Animated.View>
       <Animated.Text
         style={[
-          styles.activeType,
+          styles.label,
           {
             transform: [{ translateY }, { scale: textScale }, { translateX }],
             color: textColor,
           },
         ]}>
-        {activeType} Stories
+        {_getActiveStoryType()} Stories
       </Animated.Text>
     </Animated.View>
   );
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
   storyButton: {
     marginRight: 12,
   },
-  activeType: {
+  label: {
     color: colors.primary,
     fontSize: 20,
     fontWeight: '700',

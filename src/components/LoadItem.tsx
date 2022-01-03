@@ -11,13 +11,10 @@ type LoadItemProps = {
 };
 
 export const LoadItem: React.FC<LoadItemProps> = ({ id }) => {
-  const { data, isLoading, isError } = useQuery(
-    ['getStoryDetails', id],
-    () => getStoryDetails({ id }),
-    {
-      enabled: !!id,
-    },
+  const { data, isLoading, isError } = useQuery(['getStoryDetails', id], () =>
+    getStoryDetails({ id }),
   );
+
   return (
     <>
       {isLoading ? (
