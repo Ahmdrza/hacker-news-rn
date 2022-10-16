@@ -7,6 +7,7 @@ import { BestStoriesScreen } from '../screens/BestStoriesScreen';
 import { JobStoriesScreen } from '../screens/JobStoriesScreen';
 import { WebViewScreen } from '../screens/WebViewScreen';
 import { RootStackParamList } from '../types/stack';
+import { StoryDetailScreen } from '../screens/StoryDetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -50,6 +51,13 @@ export const StackNavigator: React.FC = () => {
           headerShown: true,
         }}
         component={WebViewScreen}
+      />
+      <Stack.Screen
+        name="storyDetails"
+        options={{
+          headerShown: false,
+        }}
+        component={StoryDetailScreen}
       />
     </Stack.Navigator>
   );

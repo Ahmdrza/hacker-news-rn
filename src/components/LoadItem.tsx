@@ -39,6 +39,7 @@ export const LoadItem: React.FC<LoadItemProps> = ({ id }) => {
           author={data.data.by}
           time={data.data.time}
           url={data.data.url}
+          text={data.data.text}
         />
       ) : null}
     </>

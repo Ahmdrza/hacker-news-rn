@@ -16,6 +16,7 @@ type ItemProps = {
   author: string;
   time: number;
   url?: string;
+  text?: string;
 };
 
 export const Item: React.FC<ItemProps> = ({
@@ -25,16 +26,22 @@ export const Item: React.FC<ItemProps> = ({
   author,
   time,
   url,
+  text,
 }) => {
   const { navigate } =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const handleNavigation = () => {
+    if (url) {
+      return navigate('webview', { title, url });
+    }
+    if (text) {
+      return navigate('storyDetails', { id, title, text, by: author });
+    }
+  };
   return (
     <Card>
-      <Pressable
-        style={styles.container}
-        onPress={() => {
-          url && navigate('webview', { title, url });
-        }}>
+      <Pressable style={styles.container} onPress={handleNavigation}>
         <View style={styles.upvotesContainer}>
           <Icon name="heart" size={18} color={colors.primary} />
           <Text style={{ color: colors.primary }}>
